@@ -1,8 +1,8 @@
 package ru.spbstu.telematics.stu.collections;
 import java.util.Iterator;
+//import java.util.ArrayList;
 import java.util.NoSuchElementException;
-public class ArrayQueue<T> implements IArrayQueue<T>, Iterable<T>, Iterator<T>  {
-	private int index = 0;
+public class ArrayQueue<T> implements IArrayQueue<T>, Iterable<T>  {
 	private int elemCount = 0;				// Число элементов в очереди
 	private T[] arr;	// Основной массив очереди. Пусть их будет 10 изначально
 
@@ -68,27 +68,51 @@ public class ArrayQueue<T> implements IArrayQueue<T>, Iterable<T>, Iterator<T>  
 		arr = tmp1;
 	}
 	
-	public Iterator<T> iterator(){
-		return this;
+	//Реализация интерфейса iterator
+	private class Itr implements Iterator<T>
+	{
+		private int index = 0;
+		@Override
+		public boolean hasNext() {
+			if (index<elemCount)
+				return true;
+			else
+			return false;
+		}
+		
+		@Override
+		public T next() {
+			if (index==elemCount)
+				throw new NoSuchElementException();
+			else
+			{
+				T result = arr[index];
+				index++;
+				return result;
+			}
+		}
+		
+		@Override
+		public void remove() {
+			// TODO Auto-generated method stub
+			T[] tmp = (T[]) new Object[arr.length-1];
+			if (index > 0)
+				System.arraycopy(arr, 0, tmp, 0, index);
+			System.arraycopy(arr, index+1, tmp, index, arr.length-index-1);
+			if (elemCount>0) 
+				elemCount--;
+			arr = tmp;
+		}
+		
 	}
 	
-	@Override
-	public boolean hasNext() {
-		if (index<elemCount)
-			return true;
-		else
-		return false;
+	public Iterator<T> iterator(){
+		return new Itr();
 	}
-	@Override
-	public T next() {
-		if (index==elemCount)
-			throw new NoSuchElementException();
-		else
-		{
-			T result = arr[index];
-			index++;
-			return result;
-		}
-	}
+	
+	
+	
+
+	
 	
 }
