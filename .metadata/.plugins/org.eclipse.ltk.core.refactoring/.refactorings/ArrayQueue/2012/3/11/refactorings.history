@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring accessors="true" comment="Delete 1 element(s) from project &apos;ArrayQueue&apos;&#x0A;- Original project: &apos;ArrayQueue&apos;&#x0A;- Original element: &apos;ArrayQueue/src/ru.spbstu.telematics.stu&apos;" description="Delete element" element1="/src&lt;ru.spbstu.telematics.stu" elements="1" flags="589830" id="org.eclipse.jdt.ui.delete" resources="0" stamp="1331578382239" subPackages="false" version="1.0"/>
+</session>

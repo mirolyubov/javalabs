@@ -1,0 +1,23 @@
+package ru.spbstu.telematics.stu.collections;
+import java.util.Iterator;
+class QueueTest {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		ArrayQueue<Integer> q = new ArrayQueue<Integer>();
+		for (int i=1; i<11; i++)
+			q.add(i);
+		q.out();
+		System.out.println("Current queue size is = "+q.size());
+		q.rotate(3);
+		System.out.println("Now rotated for 3");
+		q.out();
+		int a = q.get();
+		System.out.println("Now got element "+a+" from queue");
+		System.out.println("Current queue size is "+q.size());
+		System.out.println("Now out with the iterator");
+		for(Iterator<Integer> i = q.iterator(); i.hasNext(); System.out.println(i.next()));
+	}
+}
