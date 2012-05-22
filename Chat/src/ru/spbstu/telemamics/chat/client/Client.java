@@ -8,11 +8,12 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class Client {
+	final static Socket s = new Socket();
+	static ObjectOutputStream oos;
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
-		final Socket s = new Socket();
 		s.connect(new InetSocketAddress("localhost", 10002));
-		ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());
-		(new Runnable() {
+		oos = new ObjectOutputStream(s.getOutputStream());
+		new Thread((new Runnable() {
 			
 			@Override
 			public void run() {
@@ -23,13 +24,15 @@ public class Client {
 					e.printStackTrace();
 				}
 			}
-		}).run();
-		for (int i = 0; i < 10000; i++) {
-			Message m = new Message("Hey yo!"+i, "kite");
+		})).start();
+		logIn("mike");
+		for (int i = 0; i < 5; i++) {
+			Message m = new Message("Hey yo!"+i, "mike", "MESSAGE");
 			oos.writeObject(m);
 			//Message resp = (Message) ois.readObject();
 			//System.out.println(resp);
 		}
+		logOut("mike");
 	}
 	
 	private static void recieveMessages(Socket s) throws IOException {
@@ -42,5 +45,15 @@ public class Client {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	private static void logIn(String userName) throws IOException{
+		Message m = new Message("", userName, "LOGIN");
+		oos.writeObject(m);
+	}
+	
+	private static void logOut(String userName) throws IOException{
+		Message m = new Message("", userName, "LOGOUT");
+		oos.writeObject(m);
 	}
 }
