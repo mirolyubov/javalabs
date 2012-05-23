@@ -35,11 +35,11 @@ public class Application {
 		final AppFrame frame = new AppFrame(client);
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosing(WindowEvent e) {	// Íà çàêðûòèå ôîðìû ïîâåñèì çàïðîñ íà âûõîä èç ÷àòà
+			public void windowClosing(WindowEvent e) {	// Log out user on closing the window
 				try {
 					if (client.isLogedIn)
-						client.logOut();	// ðàçðåãèñòðèðóåìñÿ
-					client.close();			// èíôîðìèðóåì î âûõîäå
+						client.logOut();	// send log out request
+					client.close();			// send close signal
 				} catch (IOException e1) {
 					//e1.printStackTrace();
 				}
@@ -72,7 +72,7 @@ class ChatClient {
 		this.port = port;
 	}
 	
-	public boolean connect(){	// Ñîåäèíÿåò ñ ñåðâåðîì
+	public boolean connect(){
 		try {
 			s.connect(new InetSocketAddress(serverAddr, port));
 		} catch (IOException e) {
@@ -80,7 +80,7 @@ class ChatClient {
 			return false;
 		}
 		try {
-			oos = new ObjectOutputStream(s.getOutputStream());	// Áåðåì ïîòîêè
+			oos = new ObjectOutputStream(s.getOutputStream());
 			ois = new ObjectInputStream(s.getInputStream());
 		} catch (IOException e) {
 			internalError = true;
@@ -90,7 +90,7 @@ class ChatClient {
 		return true;
 	}
 	
-	public boolean sendMessage(String text, String from){	// Øëåò ñîîáùåíèå
+	public boolean sendMessage(String text, String from){
 		Message m = new Message(text, from, "MESSAGE");
 		try {
 			oos.writeObject(m);
@@ -101,31 +101,31 @@ class ChatClient {
 		return true;
 	}
 	
-	public void logIn(String userName) throws IOException{	// Ïðîñèò ðåãèñòðàöèè
+	public void logIn(String userName) throws IOException{
 		Message m = new Message("", userName, "LOGIN");
 		this.userName = userName;
 		oos.writeObject(m);
 	}
 	
-	public void logOut() throws IOException{				// Ïðîñèò ðàçðåãèñòðèðîâàòü
+	public void logOut() throws IOException{
 		Message m = new Message("", this.userName, "LOGOUT");
 		oos.writeObject(m);
 	}
 	
-	public void close() throws IOException{					// Óâåäîìëÿåò î âûõîäå
+	public void close() throws IOException{					
 		Message m = new Message("", this.userName, "CLOSE");
 		oos.writeObject(m);
 	}
 	
-	public void recieveMessages(JTextArea textArea) throws IOException {	// Ïðèíèìàåò ñîîáùåíèÿ
+	public void recieveMessages(JTextArea textArea) throws IOException {	
 		//ObjectInputStream ois = new ObjectInputStream(s.getInputStream());
 		while(true) {
 			try {
 				Message resp = (Message) ois.readObject();	
-				if (resp.status.equals("LOGINCONFIGM")) {	// Ïðèøëî ïîäòâåðæäåíèå ðåãèñòðàöèè
+				if (resp.status.equals("LOGINCONFIGM")) {	// login was successful
 					isLogedIn = true;
 				}
-				textArea.append(resp.userName+"> "+resp.text+"\n");		// Âûâîäèì ñîîáùåíèå
+				textArea.append(resp.userName+"> "+resp.text+"\n");	
 			} catch (IOException | ClassNotFoundException e) {
 				textArea.append("Lost server connection"+"\n");
 				break;
@@ -167,7 +167,7 @@ class AppFrame extends JFrame {
 		JScrollPane scroller = new JScrollPane(textArea);
 		add(scroller, BorderLayout.CENTER);
 		
-		loginButton.addActionListener(new ActionListener() {	// Îáðàáîò÷èê íàæàòèÿ êíîïêè Login
+		loginButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -189,7 +189,7 @@ class AppFrame extends JFrame {
 		sendButton.addActionListener(new ActionListener() {
 			
 			@Override
-			public void actionPerformed(ActionEvent e) {	// Îáðàáîò÷èê íàæàòèÿ êíîïêè Send
+			public void actionPerformed(ActionEvent e) {
 				if (connected && !messageField.getText().equals("")) {
 					if (!client.sendMessage(messageField.getText(), client.userName))
 						textArea.append("Error sending message");
@@ -201,7 +201,7 @@ class AppFrame extends JFrame {
 		footer.add(messageField);
 		add(footer, BorderLayout.SOUTH);
 		
-		reciever = new Thread(new Runnable() {	// Ïîòîê-÷èòàòåëü ñîîáùåíèé îò ñåðâåðà
+		reciever = new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -216,7 +216,7 @@ class AppFrame extends JFrame {
 		});
 		reciever.start();
 		
-		if (!connected)		// Åñëè íå ñîåäèíèëèñü
+		if (!connected)
 			textArea.append("Cannot connect to server\n");
 	}
 	
